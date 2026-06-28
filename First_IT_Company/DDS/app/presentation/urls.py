@@ -1,5 +1,7 @@
 from django.urls import path
 
+from .views import TransactionView
+
 urlpatterns = [
-    path()
+    path('/transactions', TransactionView.as_view())
 ]
