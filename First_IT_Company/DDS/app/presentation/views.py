@@ -1,21 +1,42 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.serializers import
 
-from First_IT_Company.DDS.models import Transaction
 from First_IT_Company.DDS.app.logic.services import TransactionService
 from First_IT_Company.DDS.app.infrastructure.repositories import TransactionRepository
+from .serializers import (TransactionOutputSerializer,
+                          TransactionCreateInputSerializer,
+                          TransactionDeleteInputSerializer,
+                          TransactionFilterInputSerializer)
+
 
 
 class TransactionView(APIView):
 
     def get(self, request):
-        transaction_service = TransactionService(TransactionRepository())
-        transactions = transaction_service.get_all_transactions()
+        filter_serializer = TransactionFilterInputSerializer(data=request.query_params)
+        filter_serializer.is_valid()
 
-        return Response(transactions)
+        transaction_service = TransactionService(TransactionRepository())
+        transactions = transaction_service.get_transactions(filter_serializer.validated_data)
+
+        serializer = TransactionOutputSerializer(transactions, many=True)
+
+        return Response(serializer.data)
 
     def post(self, request):
-        res = Transaction.objects.create()
+        serializer = TransactionCreateInputSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        transaction_service = TransactionService(TransactionRepository())
+        transaction_service.create_transaction(serializer.validated_data)
+
+        return Response({"status": True})
+
+    def delete(self, request):
+        serializer = TransactionDeleteInputSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        transaction_service = TransactionService(TransactionRepository())
+        transaction_service.delete_transaction(serializer.validated_data)
 
         return Response({"status": True})

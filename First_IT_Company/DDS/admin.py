@@ -1,7 +1,12 @@
 from django.contrib import admin
-from .models import TransactionStatus, TransactionType, TransactionCategories, TransactionSubCategories, Transaction
+from .models import (
+    TransactionStatusModel,
+    TransactionTypeModel,
+    TransactionCategoriesModel,
+    TransactionSubCategoriesModel,
+    TransactionModel)
 
 admin.site.register([
-    TransactionStatus, TransactionType,
-    TransactionCategories, TransactionSubCategories, Transaction,
+    TransactionStatusModel, TransactionTypeModel,
+    TransactionCategoriesModel, TransactionSubCategoriesModel, TransactionModel,
 ])
