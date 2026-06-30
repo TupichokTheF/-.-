@@ -8,3 +8,6 @@ class InvalidTransactionType(ServiceError):
 
 class InvalidTransactionId(ServiceError):
     pass
+
+class InvalidSubCategoryId(ServiceError):
+    pass

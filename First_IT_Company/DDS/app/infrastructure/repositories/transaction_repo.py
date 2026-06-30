@@ -1,14 +1,16 @@
 from First_IT_Company.DDS.models import TransactionModel, TransactionSubCategoriesModel
 from First_IT_Company.DDS.app.domains.transaction import Transaction
 from First_IT_Company.DDS.app.infrastructure.mappers.transaction_mapper import TransactionMapper, TransactionSubCategoryMapper
-from .exceptions import TransactionNotFound
+from .exceptions import TransactionNotFound, SubCategoryNotFound
 
 class TransactionRepository:
 
     def get_transaction_sub_category_by_id(self, sub_category_id: int):
         res = TransactionSubCategoriesModel.objects.select_related(
             "main_category__type"
-        ).get(id=sub_category_id)
+        ).filter(id=sub_category_id).first()
+        if not res:
+            raise SubCategoryNotFound("Sub category with that id wasn't found")
 
         return TransactionSubCategoryMapper.to_entity(res)
 
@@ -39,10 +41,9 @@ class TransactionRepository:
         return True
 
     def delete_transaction_by_id(self, transaction_id: int):
-        tr = TransactionModel.objects.get(id=transaction_id)
-        if not tr:
-            raise TransactionNotFound("Transaction with that id wasn't found")
-
+        tr = TransactionModel.objects.filter(id=transaction_id).first()
+        if tr is None:
+            raise TransactionNotFound(f"Transaction with id={transaction_id} was not found")
         tr.delete()
 
         return True

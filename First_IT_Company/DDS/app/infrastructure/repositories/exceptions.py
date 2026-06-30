@@ -1,6 +1,9 @@
 
-class InfraExceptions(Exception):
+class InfraError(Exception):
     pass
 
-class TransactionNotFound(InfraExceptions):
+class TransactionNotFound(InfraError):
+    pass
+
+class SubCategoryNotFound(InfraError):
     pass

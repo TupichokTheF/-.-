@@ -1,6 +1,6 @@
 from First_IT_Company.DDS.app.domains.transaction import Transaction
-from First_IT_Company.DDS.app.infrastructure.repositories import TransactionRepository, TransactionNotFound
-from .exceptions import InvalidTransactionType, InvalidTransactionId
+from First_IT_Company.DDS.app.infrastructure.repositories import TransactionRepository, TransactionNotFound, SubCategoryNotFound
+from .exceptions import InvalidTransactionType, InvalidTransactionId, InvalidSubCategoryId
 
 class TransactionService:
 
@@ -13,7 +13,11 @@ class TransactionService:
         return transactions
 
     def create_transaction(self, transaction_data: dict) -> bool:
-        transaction_sub_category = self._transaction_repo.get_transaction_sub_category_by_id(transaction_data['sub_category_id'])
+        try:
+            transaction_sub_category = self._transaction_repo.get_transaction_sub_category_by_id(transaction_data['sub_category_id'])
+        except SubCategoryNotFound as e:
+            raise InvalidSubCategoryId(str(e))
+
         if transaction_sub_category.main_category.type.id != transaction_data['type_id']:
             raise InvalidTransactionType("Invalid transaction type for chosen category")
 
