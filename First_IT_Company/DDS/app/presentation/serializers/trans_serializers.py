@@ -5,7 +5,7 @@ class TransactionOutputSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     created_at = serializers.DateField()
     amount = serializers.DecimalField(max_digits=14, decimal_places=2)
-    comment = serializers.CharField()
+    comment = serializers.CharField(required=False)
     status = serializers.CharField(source="status.status")
     type = serializers.CharField(source="type.type")
     category = serializers.CharField(source="sub_category.main_category.name")

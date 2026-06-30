@@ -1,20 +1,20 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.exceptions import ValidationError
 
 from First_IT_Company.DDS.app.logic.services import TransactionService
 from First_IT_Company.DDS.app.infrastructure.repositories import TransactionRepository
-from .serializers import (TransactionOutputSerializer,
-                          TransactionCreateInputSerializer,
-                          TransactionDeleteInputSerializer,
-                          TransactionFilterInputSerializer)
-
+from First_IT_Company.DDS.app.presentation.serializers.trans_serializers import (TransactionOutputSerializer,
+                                                                               TransactionCreateInputSerializer,
+                                                                               TransactionDeleteInputSerializer,
+                                                                               TransactionFilterInputSerializer)
 
 
 class TransactionView(APIView):
 
     def get(self, request):
         filter_serializer = TransactionFilterInputSerializer(data=request.query_params)
-        filter_serializer.is_valid()
+        filter_serializer.is_valid(raise_exception=True)
 
         transaction_service = TransactionService(TransactionRepository())
         transactions = transaction_service.get_transactions(filter_serializer.validated_data)
@@ -28,7 +28,10 @@ class TransactionView(APIView):
         serializer.is_valid(raise_exception=True)
 
         transaction_service = TransactionService(TransactionRepository())
-        transaction_service.create_transaction(serializer.validated_data)
+        try:
+            transaction_service.create_transaction(serializer.validated_data)
+        except Exception as e:
+            raise ValidationError(str(e))
 
         return Response({"status": True})
 
