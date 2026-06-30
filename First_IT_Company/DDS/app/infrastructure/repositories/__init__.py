@@ -1,1 +1,2 @@
 from .transaction_repo import TransactionRepository
+from .exceptions import TransactionNotFound

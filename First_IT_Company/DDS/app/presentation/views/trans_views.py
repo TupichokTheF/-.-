@@ -1,8 +1,8 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import ValidationError, NotFound
 
-from First_IT_Company.DDS.app.logic.services import TransactionService
+from First_IT_Company.DDS.app.logic.services import TransactionService, InvalidTransactionType, InvalidTransactionId
 from First_IT_Company.DDS.app.infrastructure.repositories import TransactionRepository
 from First_IT_Company.DDS.app.presentation.serializers.trans_serializers import (TransactionOutputSerializer,
                                                                                TransactionCreateInputSerializer,
@@ -30,7 +30,7 @@ class TransactionView(APIView):
         transaction_service = TransactionService(TransactionRepository())
         try:
             transaction_service.create_transaction(serializer.validated_data)
-        except Exception as e:
+        except InvalidTransactionType as e:
             raise ValidationError(str(e))
 
         return Response({"status": True})
@@ -40,6 +40,9 @@ class TransactionView(APIView):
         serializer.is_valid(raise_exception=True)
 
         transaction_service = TransactionService(TransactionRepository())
-        transaction_service.delete_transaction(serializer.validated_data)
+        try:
+            transaction_service.delete_transaction(serializer.validated_data)
+        except InvalidTransactionId as e:
+            raise NotFound(str(e))
 
         return Response({"status": True})

@@ -1,10 +1,10 @@
 
 
-class ServiceError(BaseException):
+class ServiceError(Exception):
     pass
 
 class InvalidTransactionType(ServiceError):
     pass
 
-class InvalidTransactionSubCategory(ServiceError):
+class InvalidTransactionId(ServiceError):
     pass

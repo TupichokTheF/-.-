@@ -1,6 +1,6 @@
 from First_IT_Company.DDS.app.domains.transaction import Transaction
-from First_IT_Company.DDS.app.infrastructure.repositories.transaction_repo import TransactionRepository
-from .exceptions import InvalidTransactionType
+from First_IT_Company.DDS.app.infrastructure.repositories import TransactionRepository, TransactionNotFound
+from .exceptions import InvalidTransactionType, InvalidTransactionId
 
 class TransactionService:
 
@@ -22,6 +22,9 @@ class TransactionService:
         return True
 
     def delete_transaction(self, transaction_data: dict):
-        self._transaction_repo.delete_transaction_by_id(transaction_data["id"])
+        try:
+            self._transaction_repo.delete_transaction_by_id(transaction_data["id"])
+        except TransactionNotFound as e:
+            raise InvalidTransactionId(str(e))
 
         return True

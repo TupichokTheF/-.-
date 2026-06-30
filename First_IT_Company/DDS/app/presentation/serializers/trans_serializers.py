@@ -1,10 +1,12 @@
 from rest_framework import serializers
 
+from decimal import Decimal
+
 
 class TransactionOutputSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     created_at = serializers.DateField()
-    amount = serializers.DecimalField(max_digits=14, decimal_places=2)
+    amount = serializers.DecimalField(max_digits=14, decimal_places=2, min_value=Decimal("0.01"))
     comment = serializers.CharField(required=False)
     status = serializers.CharField(source="status.status")
     type = serializers.CharField(source="type.type")
@@ -12,8 +14,8 @@ class TransactionOutputSerializer(serializers.Serializer):
     sub_category = serializers.CharField(source="sub_category.name")
 
 class TransactionCreateInputSerializer(serializers.Serializer):
-    amount = serializers.DecimalField(max_digits=14, decimal_places=2)
-    comment = serializers.CharField()
+    amount = serializers.DecimalField(max_digits=14, decimal_places=2, min_value=Decimal("0.01"))
+    comment = serializers.CharField(required=False)
     status_id = serializers.IntegerField()
     type_id = serializers.IntegerField()
     sub_category_id = serializers.IntegerField()
