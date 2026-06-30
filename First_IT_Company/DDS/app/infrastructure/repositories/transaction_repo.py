@@ -10,7 +10,7 @@ class TransactionRepository:
             "main_category__type"
         ).filter(id=sub_category_id).first()
         if not res:
-            raise SubCategoryNotFound("Sub category with that id wasn't found")
+            raise SubCategoryNotFound(f"Sub category with id={sub_category_id} was not found")
 
         return TransactionSubCategoryMapper.to_entity(res)
 
@@ -35,10 +35,10 @@ class TransactionRepository:
 
         return [TransactionMapper.to_entity(tr) for tr in res]
 
-    def create_new_transaction(self, data_: dict) -> bool:
+    def create_new_transaction(self, data_: dict) -> Transaction:
         tr = TransactionModel.objects.create(**data_)
 
-        return True
+        return TransactionMapper.to_entity(tr)
 
     def delete_transaction_by_id(self, transaction_id: int):
         tr = TransactionModel.objects.filter(id=transaction_id).first()
